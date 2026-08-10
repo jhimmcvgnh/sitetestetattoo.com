@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function generateDropdownMenuHtml(prefix = 'btn-dropdown-', studioName = '', userEmail = '', isLoggedIn = false) {
     const currentName = studioName || 'Visitante';
     const currentEmail = userEmail || '';
-    const systemBaseUrl = 'https://sistematestetattoo-com.vercel.app/';
+    const systemBaseUrl = 'https://tattoosistema-com.vercel.app/';
 
     return `
       <div class="dropdown-user-header">
