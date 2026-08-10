@@ -1220,32 +1220,5 @@
         });
     }
 
-    // Touch scroll fix para mobile
-    (function() {
-        const bookingContent = document.getElementById('bookingContent');
-        if (!bookingContent) return;
-
-        let startY = 0;
-        let startScrollTop = 0;
-        let isTouchMove = false;
-
-        bookingContent.addEventListener('touchstart', function(e) {
-            startY = e.touches[0].clientY;
-            startScrollTop = bookingContent.scrollTop;
-            isTouchMove = false;
-        }, { passive: true });
-
-        bookingContent.addEventListener('touchmove', function(e) {
-            const dy = startY - e.touches[0].clientY;
-            bookingContent.scrollTop = startScrollTop + dy;
-            isTouchMove = true;
-        }, { passive: true });
-
-        bookingContent.addEventListener('touchend', function(e) {
-            if (isTouchMove) {
-                isTouchMove = false;
-            }
-        }, { passive: true });
-    })();
-
 })();
+
