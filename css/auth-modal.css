@@ -1,0 +1,809 @@
+/* CSS para a Tela de Autenticação com Shader Lines */
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL: Impede zoom automático do iOS ao focar em inputs.
+   iOS faz zoom quando font-size < 16px em qualquer campo.
+   Esta regra cobre TODO o site de forma definitiva.
+───────────────────────────────────────────────────────────── */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input, input[type="text"], input[type="email"],
+  input[type="password"], input[type="tel"],
+  input[type="number"], input[type="search"],
+  input[type="url"], textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+#auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #050507;
+  opacity: 1;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#auth-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#shader-canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#shader-canvas-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}.auth-card {
+  position: relative;
+  z-index: 10;
+  width: 90%;
+  max-width: 360px;
+  background: rgba(22, 23, 27, 0.82);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 22px 24px 24px 24px;
+  box-sizing: border-box;
+  color: #ffffff;
+  animation: authCardPop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authCardPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.auth-header-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.auth-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.auth-tab-btn {
+  background: transparent;
+  border: none;
+  color: #9ea3b0;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.auth-tab-btn.active {
+  background: #ffffff;
+  color: #0b0c0e;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
+}
+
+.auth-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cfd3dc;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.auth-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.auth-title {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  margin: 0 0 16px 0;
+  color: #ffffff;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  color: #838896;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-input-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+}
+
+.auth-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 11px 14px 11px 40px;
+  color: #ffffff;
+  font-size: 16px; /* Mínimo 16px para evitar zoom automático no iOS */
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
+}
+
+.auth-input::placeholder {
+  color: #727785;
+}
+
+.auth-input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+.auth-message {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  word-break: break-word;
+  animation: fadeInMsg 0.3s ease;
+}
+
+@keyframes fadeInMsg {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-message.error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+.auth-message.success {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #4ade80;
+}
+
+.auth-submit-btn {
+  margin-top: 4px;
+  width: 100%;
+  background: #ffffff;
+  color: #0b0c0e;
+  border: none;
+  border-radius: 12px;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.auth-submit-btn:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 14px 0 12px 0;
+  color: #636875;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.auth-divider span {
+  padding: 0 12px;
+}
+
+.auth-social-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 10px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-social-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.auth-footer-text {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 10px;
+  color: #727785;
+  line-height: 1.4;
+}
+
+.auth-footer-text a {
+  color: #a4a9b6;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.auth-footer-text a:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    max-width: calc(100vw - 28px);
+    padding: 18px 18px 20px 18px;
+    border-radius: 16px;
+  }
+  .auth-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+  .auth-header-nav {
+    margin-bottom: 14px;
+  }
+  .auth-input {
+    padding: 9px 12px 9px 36px;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+  .auth-input-icon {
+    left: 12px;
+    width: 14px;
+    height: 14px;
+  }
+  .auth-submit-btn,
+  .auth-social-btn {
+    padding: 9px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+}
+
+/* User Avatar Button & Dropdown Menu */
+.user-avatar-container {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.user-avatar-container.overlay-avatar {
+  position: absolute;
+  top: 36px;
+  left: 48px;
+  z-index: 99999;
+  margin-left: 0;
+}
+
+.user-avatar-container.overlay-avatar .user-dropdown-menu {
+  left: 0;
+  right: auto;
+}
+
+@media (max-width: 768px) {
+  .user-avatar-container.overlay-avatar {
+    top: 24px;
+    left: 24px;
+  }
+}
+
+.user-avatar-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.user-avatar-btn:hover,
+.user-avatar-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #ffffff;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.user-avatar-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: #ffffff;
+  fill: none;
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 240px;
+  background: rgba(20, 21, 25, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.96);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.user-dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.dropdown-user-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 8px;
+}
+
+.dropdown-studio-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #7d8291;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.dropdown-studio-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: #d1d5e0;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.dropdown-item svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.dropdown-item.danger {
+  color: #ff6b6b;
+}
+
+.dropdown-item.danger:hover {
+  background: rgba(255, 107, 107, 0.12);
+  color: #ff5252;
+}
+
+/* Modal de Alteração de Nome do Projeto / Tatuaria */
+#rename-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+#rename-modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.rename-card {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(24, 25, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 28px;
+  color: #ffffff;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+}
+
+.rename-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px;
+  margin: 0 0 16px 0;
+}
+
+.rename-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.rename-btn-cancel {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rename-btn-save {
+  flex: 1;
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Botão de Contato/Login no Menu Overlay (Estilo Imagem 2) */
+.menu-login-btn {
+  position: relative;
+  z-index: 999;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(35, 36, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 40px;
+  padding: 5px 16px 5px 6px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  outline: none;
+  text-decoration: none;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.menu-login-btn:hover {
+  background: rgba(45, 47, 55, 0.9);
+  border-color: #dfb15b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(223, 177, 91, 0.25);
+}
+
+.menu-login-icon-ring {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid #dfb15b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(223, 177, 91, 0.1);
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+}
+
+.menu-login-btn:hover .menu-login-icon-ring {
+  background: rgba(223, 177, 91, 0.25);
+  box-shadow: 0 0 12px rgba(223, 177, 91, 0.4);
+}
+
+.menu-login-svg {
+  width: 18px;
+  height: 18px;
+}
+
+.menu-login-text {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+
+#footer-account-icon {
+  position: relative;
+  /* Espelha o estilo de footer .flex a:nth-of-type(2) */
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid #e7f3e2;
+  border-bottom: 1px solid #e7f3e2;
+  width: 24%;
+  padding: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  vertical-align: top;
+  overflow: visible;
+}
+
+#footer-account-icon .user-dropdown-menu {
+  position: fixed;
+  bottom: auto;
+  top: auto;
+  left: auto;
+  right: auto;
+  transform: none;
+  width: 230px;
+  z-index: 999999;
+  background: rgba(20, 21, 25, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#footer-account-icon .user-dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+@media (width >= 481px) {
+  #footer-account-icon {
+    width: 33.333%;
+  }
+}
+
+@media only screen and (width <= 400px) {
+  #footer-account-icon {
+    flex: none;
+    width: auto;
+    padding: 0.9rem;
+    border-left: 1px solid #e7f3e2;
+    border-right: 1px solid #e7f3e2;
+  }
+}
+
+#footer-account-icon:hover {
+  background-color: #e7f3e20f;
+}
+
+#footer-user-avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e7f3e2;
+  background: transparent;
+  cursor: pointer;
+  color: #e7f3e2;
+  padding: 6px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+#footer-user-avatar-btn svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Multi-Account Dropdown Styling */
+.dropdown-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #636875;
+  padding: 6px 12px 4px 12px;
+  margin-top: 4px;
+}
+
+.dropdown-studio-email {
+  font-size: 11px;
+  color: #9ea3b0;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-account-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  margin: 3px 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease;
+}
+
+.dropdown-account-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.dropdown-account-item.active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.account-item-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: 120px;
+}
+
+.account-item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-item-email {
+  font-size: 10px;
+  color: #8b909e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-active-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.15);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.btn-account-switch {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-account-switch:hover {
+  background: #ffffff;
+  color: #0b0c0e;
+}
+
+.btn-account-remove {
+  background: transparent;
+  border: none;
+  color: #636875;
+  font-size: 11px;
+  padding: 2px 4px;
+  cursor: pointer;
+  margin-left: 4px;
+  transition: color 0.2s ease;
+}
+
+.btn-account-remove:hover {
+  color: #f87171;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 6px 0;
+}
+

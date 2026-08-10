@@ -1,0 +1,1076 @@
+/* booking-modal.css */
+
+/* Modal Backdrop Overlay */
+.booking-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    font-family: Graphik, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+}
+
+.booking-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Phone Container Mockup (Modified to clean vertical popup) */
+.booking-phone {
+    width: 90%;
+    max-width: 320px;
+    height: auto;
+    max-height: 590px;
+    background: #181818;
+    border: 1px solid rgba(231, 243, 226, 0.2);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+    transform: translateY(30px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: #e7f3e2;
+}
+
+/* ── Mobile: popup menor, bottom-sheet style ─────────────── */
+@media screen and (max-width: 480px) {
+    .booking-overlay {
+        align-items: flex-end;
+        padding-bottom: 0;
+    }
+
+    .booking-phone {
+        width: 100%;
+        max-width: 100%;
+        max-height: 82vh; /* ocupa no máximo 82% da tela */
+        border-radius: 20px 20px 0 0;
+        transform: translateY(100%);
+    }
+
+    .booking-overlay.active .booking-phone {
+        transform: translateY(0);
+    }
+
+    .booking-content {
+        padding: 28px 18px 16px;
+    }
+
+    /* Calendário menor no mobile */
+    .calendar-widget {
+        padding: 8px;
+    }
+
+    .calendar-grid {
+        gap: 3px;
+    }
+
+    .calendar-day {
+        font-size: 10px;
+        padding: 4px 0;
+    }
+
+    .time-slots-grid {
+        gap: 6px;
+    }
+
+    .time-slot-btn {
+        padding: 6px 4px;
+        font-size: 11px;
+    }
+}
+/* ────────────────────────────────────────────────────────── */
+
+/* Desktop active state */
+.booking-overlay.active .booking-phone {
+    transform: translateY(0);
+}
+
+/* Phone Notch & Top Bar Mockup (Hidden) */
+.phone-notch-container {
+    display: none;
+}
+
+.phone-notch {
+    display: none;
+}
+
+/* Modal Close Button */
+.booking-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: #e7f3e2;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+}
+
+.booking-close:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+/* Step/Progress Indicator (Hidden) */
+.booking-progress {
+    display: none;
+}
+
+.progress-step {
+    display: none;
+}
+
+/* Content Wrapper */
+.booking-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 40px 24px 24px; /* extra top padding to clear close button */
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(231, 243, 226, 0.2) transparent;
+}
+
+/* Custom scrollbar for chrome/safari */
+.booking-content::-webkit-scrollbar {
+    width: 4px;
+}
+.booking-content::-webkit-scrollbar-thumb {
+    background: rgba(231, 243, 226, 0.2);
+    border-radius: 4px;
+}
+
+/* Phase/Step Blocks */
+.booking-phase {
+    display: none;
+    flex-direction: column;
+    min-height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.booking-phase.active {
+    display: flex;
+    opacity: 1;
+}
+
+.phase-title {
+    font-size: 18px;
+    font-family: Graphik-Wide, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    display: block;
+    color: rgba(231, 243, 226, 0.7);
+}
+
+/* Step 1: Body Part Selectors */
+.body-parts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.body-part-card {
+    border: 1px solid rgba(231, 243, 226, 0.3);
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    background: transparent;
+    color: #e7f3e2;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.body-part-card:hover {
+    border-color: #e7f3e2;
+    background: rgba(231, 243, 226, 0.05);
+}
+
+.body-part-card.selected {
+    background: #e7f3e2;
+    color: #181818;
+    border-color: #e7f3e2;
+    font-weight: 600;
+}
+
+/* Multi-tattoo Toggle */
+.toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid rgba(231, 243, 226, 0.15);
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: rgba(231, 243, 226, 0.2);
+    transition: .3s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #e7f3e2;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: rgba(231, 243, 226, 0.8);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+    background-color: #181818;
+}
+
+/* Image Upload Area */
+.upload-area {
+    border: 1px dashed rgba(231, 243, 226, 0.3);
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.01);
+    position: relative;
+}
+
+.upload-area:hover {
+    border-color: #e7f3e2;
+    background: rgba(231, 243, 226, 0.03);
+}
+
+.upload-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.upload-text {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(231, 243, 226, 0.6);
+}
+
+.upload-previews-container {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.upload-preview-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 8px 12px;
+    border: 1px solid rgba(231, 243, 226, 0.15);
+    border-radius: 4px;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+.upload-preview-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid rgba(231, 243, 226, 0.3);
+}
+
+.upload-preview-info {
+    flex: 1;
+    margin-left: 12px;
+    font-size: 11px;
+    color: rgba(231, 243, 226, 0.8);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-remove-item {
+    background: none;
+    border: none;
+    color: #e7f3e2;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.upload-remove-item:hover {
+    opacity: 1;
+}
+
+/* Step 2: Calendar UI */
+.calendar-widget {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(231, 243, 226, 0.15);
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.calendar-month-year {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+.calendar-nav-btn {
+    background: none;
+    border: none;
+    color: #e7f3e2;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    text-align: center;
+}
+
+.calendar-day-header {
+    font-size: 9px;
+    text-transform: uppercase;
+    color: rgba(231, 243, 226, 0.4);
+    font-weight: 600;
+    padding: 4px 0;
+}
+
+.calendar-day {
+    font-size: 11px;
+    padding: 6px 0;
+    cursor: pointer;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.calendar-day.empty {
+    cursor: default;
+    pointer-events: none;
+}
+
+.calendar-day.disabled {
+    color: rgba(231, 243, 226, 0.2);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.calendar-day:not(.empty):not(.disabled):hover {
+    background: rgba(231, 243, 226, 0.1);
+}
+
+.calendar-day.selected {
+    background: #e7f3e2 !important;
+    color: #181818 !important;
+    font-weight: 600;
+}
+
+/* Time Slot Selector */
+.time-slots-container {
+    margin-bottom: 24px;
+}
+
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.time-slot-btn {
+    border: 1px solid rgba(231, 243, 226, 0.2);
+    background: transparent;
+    color: #e7f3e2;
+    padding: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+.time-slot-btn:hover {
+    border-color: #e7f3e2;
+}
+
+.time-slot-btn.selected {
+    background: #e7f3e2;
+    color: #181818;
+    border-color: #e7f3e2;
+    font-weight: 600;
+}
+
+.time-slot-btn.occupied {
+    opacity: 0.45;
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 99, 99, 0.3);
+    color: rgba(255, 180, 180, 0.8);
+    cursor: not-allowed;
+}
+
+.time-slot-btn.occupied:hover {
+    border-color: rgba(255, 99, 99, 0.5);
+}
+
+/* Form Inputs */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.booking-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(231, 243, 226, 0.3);
+    color: #e7f3e2;
+    padding: 8px 0;
+    font-size: 16px; /* Mínimo 16px para evitar zoom automático no iOS */
+    outline: none;
+    transition: border-bottom-color 0.2s ease;
+    -webkit-text-size-adjust: 100%;
+}
+
+.booking-input:focus {
+    border-bottom-color: #e7f3e2;
+}
+
+/* Step 3: Summary Box */
+.summary-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(231, 243, 226, 0.15);
+    padding: 16px;
+    margin-bottom: 24px;
+    font-size: 12px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed rgba(231, 243, 226, 0.1);
+    padding-bottom: 8px;
+}
+
+.summary-row:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.summary-label {
+    color: rgba(231, 243, 226, 0.5);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+}
+
+.summary-val {
+    font-weight: 500;
+    text-align: right;
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Payment Selector */
+.payment-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.payment-card {
+    border: 1px solid rgba(231, 243, 226, 0.3);
+    padding: 14px 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    background: transparent;
+    color: #e7f3e2;
+}
+
+.payment-card:hover {
+    border-color: #e7f3e2;
+}
+
+.payment-card.selected {
+    background: #e7f3e2;
+    color: #181818;
+    border-color: #e7f3e2;
+    font-weight: 600;
+}
+
+/* Pix Details Container */
+.pix-details-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(231, 243, 226, 0.15);
+    padding: 16px;
+    margin-bottom: 24px;
+    text-align: center;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.pix-qr-mock {
+    width: 140px;
+    height: 140px;
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    border-radius: 8px;
+}
+
+.pix-qr-mock svg {
+    width: 100%;
+    height: 100%;
+}
+
+.pix-key-box {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(231, 243, 226, 0.2);
+    padding: 8px;
+    font-family: monospace;
+    font-size: 10px;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pix-copy-btn {
+    border: 1px solid #e7f3e2;
+    background: transparent;
+    color: #e7f3e2;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pix-copy-btn:hover {
+    background: #e7f3e2;
+    color: #181818;
+}
+
+/* Buttons Area (Footer of phone) */
+.booking-buttons {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px 24px;
+    border-top: 1px solid rgba(231, 243, 226, 0.1);
+    background: #141414;
+    flex-shrink: 0;
+}
+
+.booking-btn {
+    flex: 1;
+    border: 1px solid #e7f3e2;
+    color: #e7f3e2;
+    background: transparent;
+    padding: 12px;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.booking-btn:hover {
+    background: rgba(231, 243, 226, 0.05);
+}
+
+.booking-btn-primary {
+    background: #e7f3e2;
+    color: #181818;
+}
+
+.booking-btn-primary:hover {
+    background: #d8ecd0;
+}
+
+.booking-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Success Step */
+.success-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.success-icon-container {
+    width: 72px;
+    height: 72px;
+    border: 2px solid #e7f3e2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: #e7f3e2;
+    animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.success-icon-container svg {
+    width: 36px;
+    height: 36px;
+}
+
+.success-subtitle {
+    font-size: 13px;
+    color: rgba(231, 243, 226, 0.7);
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .booking-phone {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        border: none;
+    }
+    .booking-content {
+        padding: 44px 16px 16px;
+    }
+    .booking-close {
+        top: 10px;
+        right: 10px;
+        width: 28px;
+        height: 28px;
+        font-size: 20px;
+    }
+    .booking-buttons {
+        padding: 12px 16px 16px;
+    }
+    .chat-widget-container {
+        bottom: 75px;
+        right: 12px;
+    }
+    .chat-widget-window {
+        width: 260px;
+        height: 280px;
+        bottom: 54px;
+    }
+    .booking-input,
+    .chat-widget-input {
+        font-size: 16px !important;
+    }
+}
+
+/* Floating Support Chat Widget (positioned absolutely inside the popup card) */
+.chat-widget-container {
+    position: absolute;
+    bottom: 85px; /* positioned right above the action buttons footer */
+    right: 16px;
+    z-index: 10000;
+}
+
+.chat-widget-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #181818;
+    border: 1px solid #e7f3e2;
+    color: #e7f3e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease;
+}
+
+.chat-widget-button:hover {
+    transform: scale(1.08);
+    background: #202020;
+}
+
+.chat-widget-button .chat-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.chat-widget-window {
+    position: absolute;
+    bottom: 58px;
+    right: 0;
+    width: 250px;
+    height: 290px;
+    background: #181818;
+    border: 1px solid rgba(231, 243, 226, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.chat-widget-window.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.chat-widget-header {
+    background: #141414;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(231, 243, 226, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-widget-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-widget-avatar {
+    font-size: 16px;
+}
+
+.chat-widget-status-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-widget-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #e7f3e2;
+}
+
+.chat-widget-status {
+    font-size: 9px;
+    color: rgba(231, 243, 226, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 1px;
+}
+
+.status-dot {
+    width: 5px;
+    height: 5px;
+    background-color: #2ecc71;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.chat-widget-close {
+    background: none;
+    border: none;
+    color: #e7f3e2;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.chat-widget-close:hover {
+    opacity: 1;
+}
+
+.chat-widget-body {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(231, 243, 226, 0.2) transparent;
+}
+
+.chat-widget-message {
+    max-width: 85%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.chat-widget-message.system {
+    background: rgba(231, 243, 226, 0.06);
+    color: #e7f3e2;
+    border-top-left-radius: 0;
+    align-self: flex-start;
+    border: 1px solid rgba(231, 243, 226, 0.1);
+}
+
+.chat-widget-footer {
+    padding: 8px;
+    background: #141414;
+    border-top: 1px solid rgba(231, 243, 226, 0.1);
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+.chat-widget-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(231, 243, 226, 0.15);
+    border-radius: 14px;
+    color: #e7f3e2;
+    padding: 6px 10px;
+    font-size: 11px;
+    outline: none;
+    resize: none;
+    max-height: 60px;
+    transition: border-color 0.2s ease;
+    line-height: 1.3;
+}
+
+.chat-widget-input:focus {
+    border-color: rgba(231, 243, 226, 0.4);
+}
+
+.chat-widget-send {
+    background: #e7f3e2;
+    color: #181818;
+    border: none;
+    border-radius: 14px;
+    padding: 6px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.chat-widget-send:hover {
+    background: #d8ecd0;
+}
+
+/* Summary Edit & Action Styles */
+.summary-val-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.summary-edit-btn {
+    border: none;
+    background: transparent;
+    color: #e7f3e2;
+    text-decoration: underline;
+    font-size: 9px;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    padding: 2px 4px;
+}
+
+.summary-edit-btn:hover {
+    opacity: 1;
+}
+
+.summary-upload-section {
+    margin-bottom: 20px;
+}
+
+.summary-upload-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed rgba(231, 243, 226, 0.3);
+    color: #e7f3e2;
+    padding: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.summary-upload-btn:hover {
+    border-color: #e7f3e2;
+    background: rgba(231, 243, 226, 0.05);
+}
+
+.confirm-actions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.confirm-action-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.confirm-btn-whatsapp {
+    background: #25d366;
+    color: #fff;
+}
+
+.confirm-btn-whatsapp:hover {
+    background: #20ba5a;
+}
+
+.confirm-btn-submit {
+    background: #e7f3e2;
+    color: #181818;
+}
+
+.confirm-btn-submit:hover {
+    background: #d8ecd0;
+}
+
+/* Header Mobile Nav Links (side-by-side) */
+@media (max-width: 1199px) {
+    .main-menu.bighide {
+        display: inline-block !important;
+    }
+    
+    .main-menu.bighide .mobile-menu__nav {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
+    }
+    
+    .main-menu.bighide .mobile-menu__nav li {
+        float: none !important;
+        display: inline-block !important;
+        width: auto !important;
+        margin: 0 !important;
+    }
+    
+    .main-menu.bighide .mobile-menu__nav li a {
+        font-size: clamp(1.3rem, 1.4vw, 1.6rem) !important;
+        padding: 6px 8px !important;
+        white-space: nowrap !important;
+        border: none !important;
+        text-transform: uppercase !important;
+        font-family: Graphik, sans-serif !important;
+    }
+}
