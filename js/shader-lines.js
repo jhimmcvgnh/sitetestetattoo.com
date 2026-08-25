@@ -30,9 +30,7 @@
     scene = new THREE.Scene();
 
     // Create geometry
-    const geometry = new THREE.PlaneBufferGeometry
-      ? new THREE.PlaneBufferGeometry(2, 2)
-      : new THREE.PlaneGeometry(2, 2);
+    const geometry = new THREE.PlaneGeometry(2, 2);
 
     // Uniforms
     uniforms = {
@@ -49,37 +47,26 @@
 
     // Fragment Shader
     const fragmentShader = `
+      #define TWO_PI 6.2831853072
+      #define PI 3.14159265359
+
       precision highp float;
       uniform vec2 resolution;
       uniform float time;
-        
-      float random (in float x) {
-          return fract(sin(x)*1e4);
-      }
-      
-      void main(void) {
-        vec2 uv = (gl_FragCoord.xy - 0.5 * resolution.xy) / min(resolution.x, resolution.y);
-        
-        float t = time * 0.04;
-        vec3 color = vec3(0.0);
 
-        for (int j = 0; j < 3; j++) {
-          for (int i = 1; i <= 6; i++) {
-            float fi = float(i);
-            float fj = float(j);
-            float r = fract(t * 0.4 + fi * 0.12 + fj * 0.04);
-            float dist = abs(length(uv) - r);
-            float intensity = (0.0035 * fi) / max(dist, 0.001);
-            if (j == 0) color.r += intensity * 1.0;
-            if (j == 1) color.g += intensity * 0.45;
-            if (j == 2) color.b += intensity * 0.85;
+      void main(void) {
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+        float t = time*0.05;
+        float lineWidth = 0.002;
+
+        vec3 color = vec3(0.0);
+        for(int j = 0; j < 3; j++){
+          for(int i=0; i < 5; i++){
+            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv) + mod(uv.x+uv.y, 0.2));
           }
         }
-
-        // Adiciona um brilho sutil de fundo
-        color += vec3(0.04, 0.02, 0.06);
-
-        gl_FragColor = vec4(color, 1.0);
+        
+        gl_FragColor = vec4(color[0],color[1],color[2],1.0);
       }
     `;
 
@@ -95,18 +82,18 @@
     scene.add(mesh);
 
     // Initialize renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio || 1);
     container.appendChild(renderer.domElement);
 
     // Resize handler
     function onWindowResize() {
       if (!container || !renderer) return;
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const width = container.clientWidth || window.innerWidth;
+      const height = container.clientHeight || window.innerHeight;
       renderer.setSize(width, height);
-      uniforms.resolution.value.x = width;
-      uniforms.resolution.value.y = height;
+      uniforms.resolution.value.x = renderer.domElement.width;
+      uniforms.resolution.value.y = renderer.domElement.height;
     }
 
     onWindowResize();
@@ -134,3 +121,4 @@
     setTimeout(initShaderAnimation, 150);
   }
 })();
+
