@@ -65,6 +65,7 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 <link rel="stylesheet" id="flickity-styles-css" href="css/flickity.min.css" media="all">
 <link rel="stylesheet" href="css/booking-modal.css">
 <link rel="stylesheet" href="css/auth-modal.css">
+<link rel="stylesheet" href="css/ad-popup.css?v=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
@@ -2168,4 +2169,141 @@ Todas as informações armazenadas pelos cookies do WooCommerce Pixel Manager s�
 	<script src="js/shader-lines.js"></script>
 	<script src="js/auth-system.js?v=1.1"></script>
 	<script src="js/booking-modal.js?v=1.1"></script>
+
+	<!-- ======================================================================= -->
+	<!-- POP-UP DE ANÚNCIO (FOCUS FRAME - SHINE BORDER 06)                       -->
+	<!-- ======================================================================= -->
+	<div id="ad-popup-overlay" aria-modal="true" role="dialog">
+		<div class="ad-focus-frame">
+			<!-- Cantos pulsantes neon verde -->
+			<div class="ad-corner ad-corner-tl animate-focus-pulse"></div>
+			<div class="ad-corner ad-corner-tr animate-focus-pulse"></div>
+			<div class="ad-corner ad-corner-bl animate-focus-pulse"></div>
+			<div class="ad-corner ad-corner-br animate-focus-pulse"></div>
+
+			<!-- Conteúdo interno do card -->
+			<div class="ad-card-content">
+				<!-- Botão Fechar (X) -->
+				<button type="button" class="ad-close-btn" id="ad-close-btn" aria-label="Fechar pop-up">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+
+				<!-- Ícone Crosshair Topo Centro -->
+				<div class="ad-crosshair-badge">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="12" cy="12" r="10"></circle>
+						<line x1="22" y1="12" x2="18" y2="12"></line>
+						<line x1="6" y1="12" x2="2" y2="12"></line>
+						<line x1="12" y1="6" x2="12" y2="2"></line>
+						<line x1="12" y1="22" x2="12" y2="18"></line>
+					</svg>
+				</div>
+
+				<!-- Badge Focus Frame -->
+				<div class="ad-pill-badge">Focus Frame</div>
+
+				<!-- Texto Descritivo -->
+				<p class="ad-description">
+					Gostou da experiencia? quer melhorias? um design totalmente novo e personalizado e melhorado? clica no botão abaixo, responda o quiz necessario que não dura nada e ganhe um presente no final por responder!!
+				</p>
+
+				<!-- Linha de Botões Inferiores -->
+				<div class="ad-actions-row">
+					<!-- Botão Esquerdo (Varinha mágica / Brilhos) -->
+					<button type="button" class="ad-icon-circle-btn" id="ad-sparkle-btn" title="Novidades & Design" aria-label="Efeitos mágicos">
+						<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+							<path d="M5 3v4"></path>
+							<path d="M19 17v4"></path>
+							<path d="M3 5h4"></path>
+							<path d="M17 19h4"></path>
+						</svg>
+					</button>
+
+					<!-- Botão CTA Principal -->
+					<a href="https://jimdevtattooquizz-com.vercel.app" target="_blank" rel="noopener noreferrer" class="ad-cta-btn" id="ad-cta-btn">
+						<span>QUERO MEU PROJETO COMPLETO</span>
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="5" y1="12" x2="19" y2="12"></line>
+							<polyline points="12 5 19 12 12 19"></polyline>
+						</svg>
+					</a>
+
+					<!-- Botão Direito (Presente) -->
+					<button type="button" class="ad-icon-circle-btn" id="ad-gift-btn" title="Seu Presente Exclusivo" aria-label="Presente exclusivo">
+						<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="20 12 20 22 4 22 4 12"></polyline>
+							<rect x="2" y="7" width="20" height="5"></rect>
+							<line x1="12" y1="22" x2="12" y2="7"></line>
+							<path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+							<path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ======================================================================= -->
+	<!-- BOTÃO FLUTUANTE DE CHAT (BOLA VERDE COM ÍCONE DE CANETA PRETA)          -->
+	<!-- ======================================================================= -->
+	<button type="button" id="floating-chat-trigger" title="Escreva o que gostaria de mudar ou melhorar" aria-label="Abrir chat de feedback">
+		<span class="chat-trigger-tooltip">Deixe seu feedback / sugestões</span>
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+		</svg>
+	</button>
+
+	<!-- ======================================================================= -->
+	<!-- JANELA POP-UP DE CHAT DE FEEDBACK                                       -->
+	<!-- ======================================================================= -->
+	<div id="feedback-chat-window" role="dialog" aria-label="Chat de feedback">
+		<!-- Header do Chat -->
+		<div class="chat-window-header">
+			<div class="chat-header-info">
+				<div class="chat-header-avatar">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+					</svg>
+				</div>
+				<div class="chat-header-text">
+					<h4 class="chat-header-title">Feedback & Melhorias</h4>
+					<div class="chat-header-status">
+						<span class="chat-status-dot"></span>
+						<span>Online • Envie sua opinião</span>
+					</div>
+				</div>
+			</div>
+			<button type="button" class="chat-close-btn" id="feedback-chat-close-btn" aria-label="Fechar chat">✕</button>
+		</div>
+
+		<!-- Mensagens do Chat -->
+		<div class="chat-window-messages" id="chat-messages-container">
+			<div class="chat-message bot">
+				<div class="chat-bubble">
+					Olá! 👋 Queremos saber sua opinião sincera: o que você não gostou, gostaria de mudar ou acha que podemos melhorar no nosso site?
+				</div>
+				<span class="chat-time">Agora</span>
+			</div>
+		</div>
+
+		<!-- Área de Entrada de Texto -->
+		<div class="chat-window-input-area">
+			<form class="chat-input-form" id="feedback-chat-form">
+				<input type="text" class="chat-input-field" id="chat-feedback-input" placeholder="Digite o que gostaria de mudar ou melhorar..." autocomplete="off">
+				<button type="submit" class="chat-send-btn" id="chat-feedback-submit" aria-label="Enviar mensagem">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="22" y1="2" x2="11" y2="13"></line>
+						<polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+					</svg>
+				</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- Script do Pop-up, Navbar e Chat -->
+	<script src="js/ad-popup.js?v=1.0"></script>
 </body></html>
