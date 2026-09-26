@@ -105,10 +105,7 @@
     }
     isPopupOpen = false;
 
-    // Registra que o anúncio foi visualizado e fechado
-    sessionStorage.setItem(STORAGE_KEY_DISMISSED, 'true');
-
-    // Desbloqueia os novos elementos:
+    // Desbloqueia os novos elementos somente após o fechamento do anúncio:
     // 1. Substitui "Tatuagens" pelo botão verde na Navbar
     replaceNavbarTatuagens();
 
@@ -365,24 +362,16 @@
     // Carrega mensagens salvas anteriormente
     loadStoredFeedback();
 
-    // 8. Verificação do Estado da Sessão
-    const isDismissed = sessionStorage.getItem(STORAGE_KEY_DISMISSED) === 'true';
+    // 8. Estado Inicial Limpo (ao recarregar ou entrar, tudo volta ao padrão)
+    sessionStorage.removeItem(STORAGE_KEY_DISMISSED);
+    restoreOriginalNavbar();
+    hideFloatingChatButton();
 
-    if (isDismissed) {
-      // Usuário já havia fechado o popup nesta sessão:
-      // Mantém o botão verde na navbar e o botão de chat ativos
-      replaceNavbarTatuagens();
-      showFloatingChatButton();
-      // E inicia o ciclo de 55 segundos
-      scheduleRecurringPopup();
-    } else {
-      // Primeira visita:
-      // O botão na navbar e o chat NÃO aparecem imediatamente.
-      // Espera 55 segundos para mostrar o anúncio pela 1ª vez.
-      initialTimer = setTimeout(() => {
-        showAdPopup();
-      }, INITIAL_DELAY_MS);
-    }
+    // Inicia a contagem de 55 segundos para mostrar o anúncio pela 1ª vez.
+    // Os elementos (botão verde na navbar e chat) só aparecem quando o usuário fechar o anúncio pelo 'X'.
+    initialTimer = setTimeout(() => {
+      showAdPopup();
+    }, INITIAL_DELAY_MS);
   }
 
   // --------------------------------------------------------------------------
