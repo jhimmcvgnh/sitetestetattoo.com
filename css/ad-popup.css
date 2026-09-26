@@ -320,16 +320,134 @@
   box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6) !important;
 }
 
-/* Ajustes no menu mobile e gaveta */
-.main-menu.bighide .mobile-menu__nav li .nav-green-cta-btn {
-  font-size: 11.5px !important;
-  padding: 6px 14px !important;
-}
-
+/* Ajustes no menu gaveta */
 .second-menu__nav li .nav-green-cta-btn {
   font-size: 14px !important;
   padding: 10px 22px !important;
   margin-bottom: 8px !important;
+}
+
+/* --------------------------------------------------------------------------
+   AJUSTES ESPECÍFICOS DA NAVBAR MOBILE (QUANDO O ELEMENTO PÓS-POPUP ESTÁ ATIVO)
+   Resolve o problema de largura, impedindo quebra de layout, zoom in/out e espaço lateral
+   -------------------------------------------------------------------------- */
+
+/* Garante contenção estrita contra overflow horizontal em mobile */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+#header {
+  max-width: 100vw !important;
+  box-sizing: border-box !important;
+}
+
+/* Telas mobile (até 768px): oculta o nome do site que aparece ao lado e dá leve diminuída no botão */
+@media (max-width: 768px) {
+  /* Oculta o nome do site / logo ao lado do botão verde no mobile */
+  body.has-nav-ad-cta .header .site__logo,
+  .header.has-nav-ad-cta .site__logo,
+  .header:has(.nav-green-cta-btn) .site__logo {
+    display: none !important;
+  }
+
+  /* Ajusta o espaçamento do header no mobile */
+  body.has-nav-ad-cta .header .wrap,
+  .header.has-nav-ad-cta .wrap,
+  .header:has(.nav-green-cta-btn) .wrap {
+    padding: 0 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    justify-content: space-between !important;
+  }
+
+  body.has-nav-ad-cta .header .site__logo ~ span,
+  .header.has-nav-ad-cta .site__logo ~ span,
+  .header:has(.nav-green-cta-btn) .site__logo ~ span {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  body.has-nav-ad-cta .header .main-menu.bighide,
+  .header.has-nav-ad-cta .main-menu.bighide,
+  .header:has(.nav-green-cta-btn) .main-menu.bighide {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  body.has-nav-ad-cta .header .main-menu.bighide .wrap,
+  .header.has-nav-ad-cta .main-menu.bighide .wrap,
+  .header:has(.nav-green-cta-btn) .main-menu.bighide .wrap {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+  }
+
+  body.has-nav-ad-cta .header .main-menu.bighide .mobile-menu__nav,
+  .header.has-nav-ad-cta .main-menu.bighide .mobile-menu__nav,
+  .header:has(.nav-green-cta-btn) .main-menu.bighide .mobile-menu__nav {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Leve diminuída no botão verde no mobile */
+  .main-menu.bighide .mobile-menu__nav li .nav-green-cta-btn {
+    font-size: 10.5px !important;
+    padding: 6px 11px !important;
+    letter-spacing: 0.2px !important;
+    white-space: nowrap !important;
+    line-height: 1.15 !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 2px 8px var(--ad-green-glow) !important;
+  }
+
+  /* Ajuste no link Agendamento para harmonizar */
+  body.has-nav-ad-cta .header .main-menu.bighide .mobile-menu__nav li a.btn-open-booking,
+  .header.has-nav-ad-cta .main-menu.bighide .mobile-menu__nav li a.btn-open-booking,
+  .header:has(.nav-green-cta-btn) .main-menu.bighide .mobile-menu__nav li a.btn-open-booking {
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Ajuste no botão hambúrguer */
+  body.has-nav-ad-cta .header .second-menu .main-menu__btn,
+  .header.has-nav-ad-cta .second-menu .main-menu__btn,
+  .header:has(.nav-green-cta-btn) .second-menu .main-menu__btn {
+    width: 34px !important;
+    height: 40px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* Telas compactas (iPhone SE, telas menores até 390px) */
+@media (max-width: 390px) {
+  .main-menu.bighide .mobile-menu__nav li .nav-green-cta-btn {
+    font-size: 9.5px !important;
+    padding: 4px 8px !important;
+    letter-spacing: 0 !important;
+  }
+
+  body.has-nav-ad-cta .header .main-menu.bighide .mobile-menu__nav li a.btn-open-booking,
+  .header.has-nav-ad-cta .main-menu.bighide .mobile-menu__nav li a.btn-open-booking,
+  .header:has(.nav-green-cta-btn) .main-menu.bighide .mobile-menu__nav li a.btn-open-booking {
+    font-size: 11px !important;
+    padding: 3px 4px !important;
+  }
+
+  body.has-nav-ad-cta .header .main-menu.bighide .mobile-menu__nav,
+  .header.has-nav-ad-cta .main-menu.bighide .mobile-menu__nav,
+  .header:has(.nav-green-cta-btn) .main-menu.bighide .mobile-menu__nav {
+    gap: 5px !important;
+  }
 }
 
 /* --------------------------------------------------------------------------

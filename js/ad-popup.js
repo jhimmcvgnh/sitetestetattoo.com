@@ -8,8 +8,8 @@
   'use strict';
 
   // Configurações de tempo e URLs
-  const INITIAL_DELAY_MS = 3 * 60 * 1000;      // 3 minutos para a 1ª aparição
-  const RECURRING_INTERVAL_MS = 90 * 1000;     // 1:30 minutos para as próximas
+  const INITIAL_DELAY_MS = 55 * 1000;          // 55 segundos para a 1ª aparição
+  const RECURRING_INTERVAL_MS = 55 * 1000;     // 55 segundos para as próximas
   const CTA_TARGET_URL = "https://jimdevtattooquizz-com.vercel.app";
   const STORAGE_KEY_DISMISSED = "tattoo_ad_popup_dismissed_session";
   const STORAGE_KEY_FEEDBACK = "tattoo_user_feedback_history";
@@ -23,6 +23,10 @@
   // 1. GERENCIAMENTO DA NAVBAR (SUBSTITUIÇÃO DE "TATUAGENS")
   // --------------------------------------------------------------------------
   function replaceNavbarTatuagens() {
+    document.body.classList.add('has-nav-ad-cta');
+    const header = document.getElementById('header');
+    if (header) header.classList.add('has-nav-ad-cta');
+
     // Alvos específicos pelos IDs existentes no HTML
     const targetIds = ['menu-item-4597', 'menu-item-4601', 'menu-item-19'];
     
@@ -57,6 +61,10 @@
   }
 
   function restoreOriginalNavbar() {
+    document.body.classList.remove('has-nav-ad-cta');
+    const header = document.getElementById('header');
+    if (header) header.classList.remove('has-nav-ad-cta');
+
     const targetIds = ['menu-item-4597', 'menu-item-4601', 'menu-item-19'];
     targetIds.forEach(id => {
       const li = document.getElementById(id);
@@ -107,7 +115,7 @@
     // 2. Torna visível o botão de chat com caneta no canto inferior direito
     showFloatingChatButton();
 
-    // Agenda a próxima exibição a cada 1:30 minutos (90s)
+    // Agenda a próxima exibição a cada 55 segundos
     scheduleRecurringPopup();
   }
 
@@ -365,12 +373,12 @@
       // Mantém o botão verde na navbar e o botão de chat ativos
       replaceNavbarTatuagens();
       showFloatingChatButton();
-      // E inicia o ciclo de 1:30 minutos
+      // E inicia o ciclo de 55 segundos
       scheduleRecurringPopup();
     } else {
       // Primeira visita:
       // O botão na navbar e o chat NÃO aparecem imediatamente.
-      // Espera 3 minutos (180s) para mostrar o anúncio pela 1ª vez.
+      // Espera 55 segundos para mostrar o anúncio pela 1ª vez.
       initialTimer = setTimeout(() => {
         showAdPopup();
       }, INITIAL_DELAY_MS);
